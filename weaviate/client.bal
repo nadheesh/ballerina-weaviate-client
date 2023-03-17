@@ -171,21 +171,6 @@ public isolated client class Client {
         ObjectsGetResponse[] response = check self.clientEp->post(resourcePath, request);
         return response;
     }
-    # Deletes Objects based on a match filter as a batch.
-    #
-    # + consistency_level - Determines how many replicas must acknowledge a request before it is considered successful 
-    # + return - Request succeeded, see response body to get detailed information about each batched item. 
-    @display {label: "Delete Objects (Batch)"}
-    resource isolated function delete batch/objects(BatchDelete payload, string? consistency_level = ()) returns BatchDeleteResponse|error {
-        string resourcePath = string `/batch/objects`;
-        map<anydata> queryParam = {"consistency_level": consistency_level};
-        resourcePath = resourcePath + check getPathForQueryParam(queryParam);
-        http:Request request = new;
-        json jsonBody = check payload.cloneWithType(json);
-        request.setPayload(jsonBody, "application/json");
-        BatchDeleteResponse response = check self.clientEp->delete(resourcePath, request);
-        return response;
-    }
     # Get a response based on GraphQL
     #
     # + payload - The GraphQL query request parameters. 
@@ -207,7 +192,7 @@ public isolated client class Client {
     resource isolated function post graphql/batch(GraphQLQueries payload) returns GraphQLResponses|error {
         string resourcePath = string `/graphql/batch`;
         http:Request request = new;
-        json jsonBody = check payload.cloneWithType(json);
+        json jsonBody = payload.toJson();
         request.setPayload(jsonBody, "application/json");
         GraphQLResponses response = check self.clientEp->post(resourcePath, request);
         return response;
