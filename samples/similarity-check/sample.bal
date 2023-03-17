@@ -33,6 +33,7 @@ public function main() returns error? {
 
     // best practices? 
     decimal[] vector = embeddingResponse.data[0].embedding;
+    
     string graphQLQuery =  string`{
                                 Get {
                                     DocStore (
