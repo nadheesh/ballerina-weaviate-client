@@ -10,11 +10,5 @@ name = "weaviate"
 version = "0.1.0"
 repository="local"
 
-[[dependency]]
-org = "ballerinax"
-name = "openai"
-version = "0.1.0"
-repository="local"
-
 [build-options]
 observabilityIncluded = true

@@ -1,6 +1,6 @@
 import ballerina/io;
 import ballerinax/weaviate;
-import ballerinax/openai;
+import ballerinax/openai.embeddings;
 
 configurable string openAIKey = ?;
 configurable string weaviateKey = ?;
@@ -9,7 +9,7 @@ configurable string weaviateURL = ?;
 public function main() returns error? {
 
     // create open-ai client
-    openai:OpenAIClient openaiClient = check new ({
+    embeddings:Client openaiClient = check new ({
         auth: {
             token: openAIKey
         }
@@ -25,14 +25,14 @@ public function main() returns error? {
     string query = "Set rate limit for Choreo";
 
     // retrieve open-ai ada embeddings for the query
-    openai:CreateEmbeddingResponse embeddingResponse = check openaiClient->/embeddings.post({
+    embeddings:CreateEmbeddingResponse embeddingResponse = check openaiClient->/embeddings.post({
             model: "text-embedding-ada-002",
             input: query
         }
     );
 
     // best practices? 
-    decimal[] vector = embeddingResponse.data[0].embedding;
+    float[] vector = embeddingResponse.data[0].embedding;
     
     string graphQLQuery =  string`{
                                 Get {
