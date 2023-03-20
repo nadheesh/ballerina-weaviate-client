@@ -1,6 +1,6 @@
 import ballerina/io;
 import ballerinax/weaviate;
-import ballerinax/openai;
+import ballerinax/openai.embeddings;
 
 configurable string openAIKey = ?;
 configurable string weaviateKey = ?;
@@ -11,14 +11,14 @@ configurable string dataPath = ?;
 public function main() returns error? {
 
     // create open-ai client
-    openai:OpenAIClient openaiClient = check new ({
+    embeddings:Client openaiClient = check new ({
         auth: {
             token: openAIKey
         }
     });
 
     // create weaviate client
-    weaviate:Client weaviateClient = check new({
+    weaviate:Client weaviateClient = check new ({
         auth: {
             token: weaviateKey
         }
@@ -38,31 +38,30 @@ public function main() returns error? {
                 "docs": row[2],
                 "url": row[3]
             }
-              
+
         };
         documentObjectArray.push(obj);
         docsArray.push(row[2]);
     });
-    
-    openai:CreateEmbeddingResponse embeddingResponse = check openaiClient->/embeddings.post({
+
+    embeddings:CreateEmbeddingResponse embeddingResponse = check openaiClient->/embeddings.post({
             model: "text-embedding-ada-002",
             input: docsArray
         }
     );
-    
-    
-    foreach int i in 0...embeddingResponse.data.length()-1 {
-        documentObjectArray[i].vector = embeddingResponse.data[i].embedding.'map(em=><float>em);
+
+    foreach int i in 0 ... embeddingResponse.data.length() - 1 {
+        documentObjectArray[i].vector = embeddingResponse.data[i].embedding;
     }
-         
+
     weaviate:Batch_objects_body batch = {
-        objects : documentObjectArray
+        objects: documentObjectArray
     };
 
-    weaviate:ObjectsGetResponse[] responseArray =  check weaviateClient->/batch/objects.post(batch);
-    
-    foreach var res in responseArray {
-            io:println(res);
+    weaviate:ObjectsGetResponse[] responseArray = check weaviateClient->/batch/objects.post(batch);
 
-    }                 
+    foreach var res in responseArray {
+        io:println(res);
+
+    }
 }

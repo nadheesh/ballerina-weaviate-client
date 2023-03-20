@@ -1,1 +1,6 @@
 .DS_Store
+target
+generated
+Config.toml
+Dependencies.toml
+samples/sample-module/*
