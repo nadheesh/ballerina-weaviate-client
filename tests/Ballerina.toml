@@ -1,0 +1,14 @@
+[package]
+org = "nadheesh"
+name = "test_con"
+version = "0.1.0"
+distribution = "2201.4.0"
+
+[[dependency]]
+org = "ballerinax"
+name = "weaviate"
+version = "0.1.0"
+repository="local"
+
+[build-options]
+observabilityIncluded = true
